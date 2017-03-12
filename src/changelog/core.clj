@@ -1,35 +1,32 @@
 (ns changelog.core
-  (:require [me.raynes.conch :refer [programs with-programs let-programs] :as sh]))
-(programs git)
+  (:require
+   [changelog.markdown :as markdown]
+   [changelog.git :as git]
+   [clojure.tools.cli :refer [parse-opts]]))
 
-(def log-args ["--pretty=format:" "\"%h-%an-%ar-%s\""])
+(def cli-options
+  [["-d" "--dir DIR" "Directory" :default "./"]
+   ["-f" "--filename FILENAME" "Filename to output formated logs" :default "CLOG.md"]])
+
+(defn usage [options-summary]
+  (->> ["Generates a markdown changelog based on commit history"
+        ""
+        "Usage: changelog [options]"
+        ""
+        "Options:"
+        options-summary
+        ""]
+       (clojure.string/join \newline)))
 
 (defn prepare-log-line [line]
   (clojure.string/split (clojure.string/replace line #"\"" "") #"-"))
 
-(defn git-log
-  [dir]
-  (git "log" (clojure.string/join log-args) {:seq true :dir dir}))
+(defn write-file
+  [file lines]
+  (spit file (clojure.string/join \newline lines)))
 
-(defn markdown-inline-link [text href] (str "[" text "]" "(" href ")"))
-(defn markdown-bold [text] (str "**" text "**"))
-
-(defn markdown-italic [text] (str "_" text "_"))
-(defn markdown-blockqoute [text] (str "\n> " text "\n"))
-
-(defn markdown-format
-  [[sha1 author time commit-msg]]
-  (str
-   (markdown-inline-link sha1 "http://github.com") " "
-   (markdown-bold author) " "
-   (markdown-italic time)
-   (markdown-blockqoute commit-msg)))
-
-(defn write-changelog
-  [lines]
-  (spit "changelog.md" (clojure.string/join "\n" lines)))
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+(defn -main [& args]
+  (let [{:keys [options]} (parse-opts args cli-options)]
+    (write-file (:filename options)
+     (map markdown/format-line
+          (map prepare-log-line (git/log-dir (:dir options)))))))
