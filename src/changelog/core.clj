@@ -6,7 +6,8 @@
 
 (def cli-options
   [["-d" "--dir DIR" "Directory" :default "./"]
-   ["-f" "--filename FILENAME" "Filename to output formated logs" :default "CLOG.md"]])
+   ["-f" "--filename FILENAME" "Filename to output formated logs" :default "CLOG.md"]
+   ["-h" "--help"]])
 
 (defn usage [options-summary]
   (->> ["Generates a markdown changelog based on commit history"
