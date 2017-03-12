@@ -1,36 +1,18 @@
 # changelog
-
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
+Simple tool for generating a markdown changelog based on git commit history.
 
 ## Usage
+```
+Usage: changelog [options]
 
-FIXME: explanation
-
-    $ java -jar changelog-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
+Options:
+  -d, --dir DIR            ./       Directory
+  -f, --filename FILENAME  CLOG.md  Filename to output formated logs
+  -h, --help
+```
 ## Examples
-
 ...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
 
 ## License
-
-Copyright © 2017 FIXME
-
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
