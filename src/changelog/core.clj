@@ -22,12 +22,19 @@
 (defn prepare-log-line [line]
   (clojure.string/split (clojure.string/replace line #"\"" "") #"-"))
 
+(defn exit [status msg]
+  (println msg)
+  (System/exit status))
+
 (defn write-file
   [file lines]
   (spit file (clojure.string/join \newline lines)))
 
 (defn -main [& args]
-  (let [{:keys [options]} (parse-opts args cli-options)]
-    (write-file (:filename options)
-     (map markdown/format-line
-          (map prepare-log-line (git/log-dir (:dir options)))))))
+  (let [{:keys [options _ _ summary]} (parse-opts args cli-options)]
+    (cond
+      (:help options) (exit 0 (usage summary))
+      :else (write-file (:filename options)
+                        (map markdown/format-line
+                             (map prepare-log-line
+                                  (git/log-dir (:dir options))))))))
