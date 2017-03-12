@@ -34,7 +34,7 @@
   (let [{:keys [options _ _ summary]} (parse-opts args cli-options)]
     (cond
       (:help options) (exit 0 (usage summary))
-      :else (write-file (:filename options)
-                        (map markdown/format-line
-                             (map prepare-log-line
-                                  (git/log-dir (:dir options))))))))
+      :else (write-file
+             (:filename options)
+             (map (comp markdown/format-line prepare-log-line)
+                  (git/log-dir (:dir options)))))))
