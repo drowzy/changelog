@@ -11,9 +11,19 @@
   [dir]
   (git "log" (clojure.string/join log-args) {:seq true :dir dir}))
 
+(defn markdown-inline-link [text href] (str "[" text "]" "(" href ")"))
+(defn markdown-bold [text] (str "**" text "**"))
+
+(defn markdown-italic [text] (str "_" text "_"))
+(defn markdown-blockqoute [text] (str "\n> " text "\n"))
+
 (defn markdown-format
   [[sha1 author time commit-msg]]
-  (str "[" sha1 "]" "(http://github.com)" " " "**"author"**" " " "_"time"_" "\n> " commit-msg "\n"))
+  (str
+   (markdown-inline-link sha1 "http://github.com") " "
+   (markdown-bold author) " "
+   (markdown-italic time)
+   (markdown-blockqoute commit-msg)))
 
 (defn write-changelog
   [lines]
